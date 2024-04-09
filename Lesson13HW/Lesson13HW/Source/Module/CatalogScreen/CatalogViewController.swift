@@ -80,16 +80,18 @@ extension CatalogViewController: UITableViewDataSource {
         let item = model.pcItems[indexPath.row]
         
         // configure cell with data
-        cell.configure(with: item)
+        cell.contentCellView.configure(with: item)
         
         // favoriteButtonTabComplition action
-        cell.favoriteButtonTabComplition = { [weak self, indexPath] in
+        cell.contentCellView.favoriteButtonTabComplition = { [weak self, indexPath] in
             guard let self = self else { return }
             
             let isFavorite = !model.pcItems[indexPath.row].favorite()
             model.updateItem(with: isFavorite, at: indexPath.row)
             
-            isFavorite ? cell.favoriteButton.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .normal) : cell.favoriteButton.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
+            isFavorite 
+            ? cell.contentCellView.favoriteButton.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .normal)
+            : cell.contentCellView.favoriteButton.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
         }
         
         return cell
@@ -106,10 +108,5 @@ extension CatalogViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-//        let isFavorite = !model.pcItems[indexPath.row].favorite()
-//        model.updateItem(with: isFavorite, at: indexPath.row)
-//        
-//        let cell = tableView.cellForRow(at: indexPath)
-//        cell?.accessoryType = isFavorite ? .checkmark : .none
     }
 }
