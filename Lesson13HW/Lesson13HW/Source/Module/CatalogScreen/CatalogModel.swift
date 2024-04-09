@@ -26,6 +26,8 @@ class CatalogModel {
             guard let self = self else { return }
             
             self.pcItems = catalog?.data ?? []
+            updateFavorites()
+            
             self.delegate?.dataDidLoad()
         }
     }
@@ -55,6 +57,19 @@ class CatalogModel {
                 manufacturer: $0.manufacturer,
                 model: $0.model
             )
+        }
+    }
+    
+    private func updateFavorites() {
+        
+        let savedItems = localStorage.getFavorites()
+        
+        for (i, value) in pcItems.enumerated() {
+            for item in savedItems {
+                if value.id == item.id {
+                    pcItems[i].isFavorite = true
+                }
+            }
         }
     }
 }
