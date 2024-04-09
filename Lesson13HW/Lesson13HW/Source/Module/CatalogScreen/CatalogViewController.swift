@@ -34,6 +34,17 @@ class CatalogViewController: UIViewController {
         
         contentView.tableView.dataSource = self
         contentView.tableView.delegate = self
+        
+        registerTableViewCells()
+    }
+   
+    // MARK: - Private
+    private func registerTableViewCells() {
+        
+        contentView.tableView.register(
+            CatalogTableViewCell.self,
+            forCellReuseIdentifier: CatalogTableViewCell.identifier
+        )
     }
 }
 
@@ -59,19 +70,34 @@ extension CatalogViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CatalogCell")
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: CatalogTableViewCell.identifier) as? CatalogTableViewCell
         else {
             assertionFailure()
             return UITableViewCell()
         }
         
         let item = model.pcItems[indexPath.row]
-        cell.textLabel?.text = item.name
-        cell.detailTextLabel?.text = item.model
         
-        cell.accessoryType = (item.isFavorite ?? false) ? .checkmark : .none
+        // configure cell with data
+        cell.configure(with: item)
+        
+        // favoriteButtonTabComplition action
+        cell.favoriteButtonTabComplition = { [weak self, indexPath] in
+            guard let self = self else { return }
+            
+            let isFavorite = !model.pcItems[indexPath.row].favorite()
+            model.updateItem(with: isFavorite, at: indexPath.row)
+            
+            isFavorite ? cell.favoriteButton.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .normal) : cell.favoriteButton.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
+        }
         
         return cell
+    }
+    
+    // height for row
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 180
     }
 }
 
@@ -80,10 +106,10 @@ extension CatalogViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        let isFavorite = !model.pcItems[indexPath.row].favorite()
-        model.updateItem(with: isFavorite, at: indexPath.row)
-        
-        let cell = tableView.cellForRow(at: indexPath)
-        cell?.accessoryType = isFavorite ? .checkmark : .none
+//        let isFavorite = !model.pcItems[indexPath.row].favorite()
+//        model.updateItem(with: isFavorite, at: indexPath.row)
+//        
+//        let cell = tableView.cellForRow(at: indexPath)
+//        cell?.accessoryType = isFavorite ? .checkmark : .none
     }
 }
