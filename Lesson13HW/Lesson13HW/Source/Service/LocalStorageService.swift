@@ -49,6 +49,7 @@ class LocalStorageService {
 
         do {
             try FileManager.default.removeItem(at: fileURL)
+            debugPrint("Favorite files was removed from: \(fileURL.path)")
         } catch {
             return
         }

@@ -11,6 +11,7 @@ class CatalogViewController: UIViewController {
     
     @IBOutlet weak var contentView: CatalogView!
     var model: CatalogModel!
+    var favoriteModel: FavoriteModel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +29,8 @@ class CatalogViewController: UIViewController {
         title = "Catalog"
         
         model = CatalogModel()
+        favoriteModel = FavoriteModel()
+        
         model.delegate = self
         
         contentView.delegate = self
@@ -89,9 +92,13 @@ extension CatalogViewController: UITableViewDataSource {
             let isFavorite = !model.pcItems[indexPath.row].favorite()
             model.updateItem(with: isFavorite, at: indexPath.row)
             
-            isFavorite 
-            ? cell.contentCellView.favoriteButton.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .normal)
-            : cell.contentCellView.favoriteButton.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
+            if isFavorite {
+                cell.contentCellView.favoriteButton.setBackgroundImage(UIImage(systemName: "heart.fill"), for: .normal)
+                favoriteModel.saveChangesIfNeeded() // update Favorite
+            } else {
+                cell.contentCellView.favoriteButton.setBackgroundImage(UIImage(systemName: "heart"), for: .normal)
+                favoriteModel.saveChangesIfNeeded() // update Favorite
+            }
         }
         
         return cell
